@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Panel de Administración - Radio Aventura</title>
+  <link rel="stylesheet" href="css/main.min.css" />
+  <style>
+    body {
+      font-family: 'Montserrat', sans-serif;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    section {
+      background: white;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: 600;
+    }
+    input[type="text"], textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+    button {
+      margin-top: 10px;
+      padding: 8px 15px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button.delete {
+      background-color: #dc3545;
+      margin-left: 10px;
+    }
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    ul li {
+      margin-bottom: 10px;
+      padding-bottom: 5px;
+      border-bottom: 1px solid #ddd;
+    }
+  </style>
+
+  <!-- Firebase SDKs -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+    import { getDatabase, ref, onValue, set, push, remove, update } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBE7WhOpjB9q_z3Bx_N6PtPEJuV6wS8qLk",
+      authDomain: "radioaventura-1e6e0.firebaseapp.com",
+      databaseURL: "https://radioaventura-1e6e0-default-rtdb.firebaseio.com",
+      projectId: "radioaventura-1e6e0",
+      storageBucket: "radioaventura-1e6e0.firebasestorage.app",
+      messagingSenderId: "4896086531",
+      appId: "1:4896086531:web:9dbafd9a896acc7754cc36",
+      measurementId: "G-8WM1YFRLWR"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // Expose db and firebase functions globally for use in inline scripts
+    window.db = db;
+    window.ref = ref;
+    window.onValue = onValue;
+    window.set = set;
+    window.push = push;
+    window.remove = remove;
+    window.update = update;
+  </script>
+</head>
+<body>
+  <h1>Panel de Administración - Radio Aventura</h1>
+
+  <section id="messages-section">
+    <h2>Mensajes</h2>
+    <ul id="messages-list"></ul>
+    <label for="message-text">Nuevo mensaje:</label>
+    <textarea id="message-text" rows="3"></textarea>
+    <button id="add-message-btn">Agregar Mensaje</button>
+  </section>
+
+  <section id="streams-config-section">
+    <h2>Configuración de Radio</h2>
+    <label for="service-select">Servicio de Streaming:</label>
+    <select id="service-select">
+      <option value="azuracast">Azuracast</option>
+      <option value="zenoradio">Zenoradio</option>
+      <option value="live365">Live365</option>
+    </select>
+    <label for="base-url">Base URL:</label>
+    <input type="text" id="base-url" />
+    <label for="id-user">ID de Usuario:</label>
+    <input type="number" id="id-user" />
+    <label for="multi-stream">Multi Stream:</label>
+    <select id="multi-stream">
+      <option value="false">No</option>
+      <option value="true">Sí</option>
+    </select>
+    <label for="slider-timing">Tiempo Slider (ms):</label>
+    <input type="number" id="slider-timing" />
+    <label for="carousel-timing">Tiempo Carousel (ms):</label>
+    <input type="number" id="carousel-timing" />
+    <label for="time-refresh">Tiempo Refresh (ms):</label>
+    <input type="number" id="time-refresh" />
+    <label for="module-video-tops">Módulo Video Tops:</label>
+    <select id="module-video-tops">
+      <option value="true">Sí</option>
+      <option value="false">No</option>
+    </select>
+    <label for="module-news">Módulo Noticias:</label>
+    <select id="module-news">
+      <option value="true">Sí</option>
+      <option value="false">No</option>
+    </select>
+    <label for="module-team">Módulo Equipo:</label>
+    <select id="module-team">
+      <option value="true">Sí</option>
+      <option value="false">No</option>
+    </select>
+    <button id="save-streams-config-btn">Guardar Configuración</button>
+  </section>
+
+  <section id="programs-section">
+    <h2>Programas</h2>
+    <label for="program-day">Día:</label>
+    <select id="program-day">
+      <option value="monday">Lunes</option>
+      <option value="tuesday">Martes</option>
+      <option value="wednesday">Miércoles</option>
+      <option value="thursday">Jueves</option>
+      <option value="friday">Viernes</option>
+      <option value="saturday">Sábado</option>
+      <option value="sunday">Domingo</option>
+    </select>
+    <label for="program-title">Título:</label>
+    <input type="text" id="program-title" />
+    <label for="program-time">Horario:</label>
+    <input type="text" id="program-time" />
+    <label for="program-description">Descripción:</label>
+    <textarea id="program-description" rows="3"></textarea>
+    <button id="add-program-btn">Agregar Programa</button>
+    <ul id="programs-list"></ul>
+  </section>
+
+  <!-- Additional sections for news, team, history, slider can be added similarly -->
+
+  <script type="module" src="js/admin.js"></script>
+</body>
+</html>
