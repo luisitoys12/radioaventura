@@ -1,0 +1,457 @@
+﻿﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="theme-color" content="dark light">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Radio Aventura</title>
+    <meta property="og:image" content="assets/redes.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="600">
+    <meta property="og:image:height" content="360">
+    <meta property="og:title" content="Radio Aventura">
+    <meta property="og:description" content="Tu Estación Fiel...">
+  <link rel="stylesheet" href="npm/swiper%4011/swiper-bundle.min.css">
+  <link rel="stylesheet" href="css/main.min.css">
+  <link rel="stylesheet" href="css/icons/remixicon.css">
+  <link rel="stylesheet" href="8.10.0/video-js.css">
+  <link href="css2?family=Montserrat:wght@300;700;800&display=swap" rel="stylesheet">
+  <script src="8.10.0/video.min.js" defer=""></script>
+  <script src="ajax/libs/color-thief/2.3.0/color-thief.umd.js" defer=""></script>
+
+  <!-- Firebase SDKs -->
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-analytics.js";
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyBE7WhOpjB9q_z3Bx_N6PtPEJuV6wS8qLk",
+      authDomain: "radioaventura-1e6e0.firebaseapp.com",
+      databaseURL: "https://radioaventura-1e6e0-default-rtdb.firebaseio.com",
+      projectId: "radioaventura-1e6e0",
+      storageBucket: "radioaventura-1e6e0.firebasestorage.app",
+      messagingSenderId: "4896086531",
+      appId: "1:4896086531:web:9dbafd9a896acc7754cc36",
+      measurementId: "G-8WM1YFRLWR"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+
+    // Make firebaseConfig globally available for other modules
+    window.firebaseConfig = firebaseConfig;
+  </script>
+
+  <script src="js/main.min.js" defer=""></script>
+  <script type="module" src="js/firebase.js"></script>
+
+  <link rel="shortcut icon" href="assets/favicon.ico" type="image/x-icon">
+  <script src="npm/swiper%4011/swiper-bundle.min.js" defer=""></script>
+  <link href='manifest.json' rel='manifest'>
+  <link rel="stylesheet" href="custom.css">
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+    import { getDatabase } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
+    import { listenForStreamsConfig } from "./js/firebase.js";
+
+    // Initialize Firebase app and database once globally
+    if (!window.firebaseApp) {
+      window.firebaseApp = initializeApp({
+        apiKey: "AIzaSyBE7WhOpjB9q_z3Bx_N6PtPEJuV6wS8qLk",
+        authDomain: "radioaventura-1e6e0.firebaseapp.com",
+        databaseURL: "https://radioaventura-1e6e0-default-rtdb.firebaseio.com",
+        projectId: "radioaventura-1e6e0",
+        storageBucket: "radioaventura-1e6e0.firebasestorage.app",
+        messagingSenderId: "4896086531",
+        appId: "1:4896086531:web:9dbafd9a896acc7754cc36",
+        measurementId: "G-8WM1YFRLWR"
+      });
+      window.firebaseDb = getDatabase(window.firebaseApp);
+    }
+
+    // Initialize window.streams with default values
+    window.streams = {
+      sliderTiming: 10000,
+      carouselTiming: 5000,
+      timeRefresh: 10000,
+      base_url: 'https://streaming.live365.com/a32532',
+      id_user: 12,
+      multi_stream: false,
+      service: 'live365',
+      module_video_tops: true,
+      module_news: true,
+      module_team: true,
+    };
+
+    // Listen for streams config changes in Firebase and update window.streams
+    listenForStreamsConfig();
+
+    // Listen for metadata updates and update UI accordingly
+    window.addEventListener('metadataUpdated', (event) => {
+      const metadata = event.detail;
+      // Example: Update elements with IDs 'song-title', 'song-artist', 'song-album', 'song-artwork'
+      const titleEl = document.getElementById('song-title');
+      const artistEl = document.getElementById('song-artist');
+      const albumEl = document.getElementById('song-album');
+      const artworkEl = document.getElementById('song-artwork');
+
+      if (titleEl) titleEl.textContent = metadata.title || '';
+      if (artistEl) artistEl.textContent = metadata.artist || '';
+      if (albumEl) albumEl.textContent = metadata.album || '';
+      if (artworkEl) {
+        if (metadata.artwork) {
+          artworkEl.src = metadata.artwork;
+          artworkEl.style.display = 'block';
+        } else {
+          artworkEl.style.display = 'none';
+        }
+      }
+    });
+  </script>
+</head>
+<body class="preload">
+  <!-- PRM -->
+  <div class="prm scrollbar" id="prm">
+    <div class="prm-content flex column g-1 justify-center wrap" id="player-prm"></div>
+  </div>
+  <!-- PRM -->
+  <div class="prm scrollbar" id="prm2">
+    <div class="prm-content flex column g-1 justify-center wrap" id="player-prm-send"></div>
+  </div>
+  <!-- / END PRM -->
+  <!-- TEMPLATE -->
+  <div class="template">
+    <!-- HEADER BAR -->
+    <div class="player flex column">
+      <div class="header-bar">
+        <div class="container flex g-1 items-center justify-between l:row column">
+          <img src="https://aventura.estacionkusmedios.com/img/logo.png" alt="logo" width="376" height="98" class="header-logo player-logo">
+          <div class="header-right flex g-0.5 l:ml-auto">
+            <button class="btn send-prm " data-outside="prm2"><i class="ri-mail-send-fill"></i> Promociones</button>
+            <button class="btn station-prm none" data-outside="prm"><i class="ri-disc-fill"></i> Estaciones</button>
+            <button class="btn station-tv none"><i class="ri-live-fill"></i> TV en vivo</button>
+          </div>
+        </div>
+      </div>
+      <header class="header relative z-10">
+        <!-- / END HEADER BAR -->
+        <!-- HEADER PLAYER -->
+        <div class="header-player relative z-20 m:pt-2 pt-1">
+          <div class="container flex g-1 l:items-end items-center l:row column relative">
+            <!-- LEFT -->
+            <div class="player-left flex-none">
+              <!-- PLAYER -->
+              <div class="relative tilt-box">
+                <div class="player-picture flex-none">
+                  <img id="player-cover" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAA1JREFUGFdjYGBgaAAAAIUAgbVRNccAAAAASUVORK5CYII=" alt="cover" height="300" width="300">
+                </div>
+                <!-- CONTROLS -->
+                <div class="player-controls flex items-center items-start g-0.5">
+                  <!-- Rhythm -->
+                  <button class="player-button player-button-rhythm-toggle">
+                    <i class="ri-rhythm-fill"></i>
+                    <i class="ri-pulse-fill"></i>
+                  </button>
+                  <!-- Volumen -->
+                  <div class="player-button player-button-volume color-title-inverse m:flex none g-1 items-center relative">
+                    <button class="player-button-volume-toggle">
+                      <i class="ri-volume-up-fill"></i>
+                    </button>
+                    <div class="dropdown">
+                      <div class="player-range-wrapper">
+                        <input aria-label="Volume" class="player-volume" max="100" min="0" name="player" type="range" value="100">
+                        <div class="player-range-fill"></div>
+                        <div class="player-range-thumb"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- / END CONTROLS -->
+              </div>
+              <!-- SOCIAL -->
+              <div class="player-social flex g-0.5 items-center justify-center mt-1.5">
+                <a href="#loading" target="_blank" class="player-social-link hidden"><i class="ri-facebook-circle-fill"></i></a>
+              </div>
+            </div>
+            <!-- / END LEFT -->
+            <!-- DATA -->
+            <div class="player-right flex l:items-start items-center column g-1 l:ml-2">
+              <!-- INFO -->
+              <div class="player-info l:text-left text-center uppercase">
+                <p class="color-text-inverse flex l:justify-start justify-center fs-7 fw-600 g-0.5 items-center"><span class="badge">On air</span>Reproduciendo</p>
+                <h1 id="song-title" class="player-title station-name truncante-line color-title-inverse song-name m:fs-2 fs-3 fw-700">Título Canción</h1>
+                <p id="song-artist" class="player-description station-description song-artist color-text-inverse m:fs-5 fs-6 fw-600">Artista</p>
+
+                <div class="player-actions flex wrap justify-center m:justify-start g-0.5 mt-1">
+                  <!-- Reproducir/Pausar -->
+                  <button aria-label="Play/Pause" class="btn player-button player-button-play flex-none relative">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewbox="0 0 24 24"><path d="M10 16.5v-9l6 4.5M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10A10 10 0 0 0 12 2Z"></path></svg>
+                    Reproducir
+                  </button>
+                  <!-- Botones de accion -->
+                  <button class="btn player-button-share">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewbox="0 0 24 24"><path d="m21 12-7-7v4C7 10 4 15 3 20c2.5-3.5 6-5.1 11-5.1V19l7-7Z"></path></svg>
+                  </button>
+                  <button class="btn player-button-lyrics">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewbox="0 0 24 24"><path d="M4 6H2v14a2 2 0 0 0 2 2h14v-2H4M18 7h-3v5.5a2.5 2.5 0 0 1-2.5 2.5 2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5c.6 0 1 .2 1.5.5V5h4m2-3H8a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2Z"></path></svg>
+                  </button>
+                </div>
+              </div>
+              <!-- / END INFO -->
+            </div>
+            <!-- / END DATA -->
+            <!-- APPS -->
+            <div class="header-app flex justify-center wrap g-0.75">
+              <a class="header-app-item" href="https://play.google.com/store/apps/details?id=com.radioamante" target="_blank">
+                <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 250 74"><path fill="#FFF" d="M237.8 0H12.2C5.5 0 0 5.5 0 12.2v49.6C0 68.5 5.5 74 12.3 74h225.5c6.7 0 12.2-5.5 12.2-12.2V12.2C250 5.5 244.5 0 237.7 0zm10.6 61.8c0 5.8-4.8 10.6-10.7 10.6H12.3c-6 0-10.7-4.8-10.7-10.6V12.2c0-5.8 4.8-10.6 10.7-10.6h225.5c5.8 0 10.6 4.8 10.6 10.6v49.6zM102.6 24v-9.7h3v-1.7h-8v1.7h3.2V24h1.8zm29.6.2c1.6 0 3-.5 4.1-1.7a5.8 5.8 0 0 0 1.7-4.2 5.8 5.8 0 0 0-5.8-6c-1.7 0-3.1.6-4.2 1.7-1.2 1.2-1.7 2.6-1.7 4.3a5.8 5.8 0 0 0 5.9 6zm-3-9a4 4 0 0 1 3-1.2 4 4 0 0 1 2.8 1.2c.8.8 1.2 1.8 1.2 3 0 1.3-.4 2.3-1.2 3.1a4 4 0 0 1-2.8 1.2 4 4 0 0 1-3-1.2 4.2 4.2 0 0 1-1.1-3c0-1.3.4-2.3 1.2-3zM88.5 42.8V46h8a7 7 0 0 1-1.9 4.2 8.2 8.2 0 0 1-6.1 2.4c-5 0-8.8-4-8.8-8.8s3.9-8.9 8.8-8.9c2.6 0 4.6 1 6 2.4l2.3-2.4c-2-1.9-4.6-3.3-8.3-3.3C81.7 31.7 76 37 76 43.9 76 50.6 81.7 56 88.4 56c3.6 0 6.3-1.2 8.5-3.5a11 11 0 0 0 2.9-7.8c0-.7 0-1.5-.2-2H88.4zm-6-18.6c1.8 0 3.2-.5 4.2-1.7 1-1 1.5-2.2 1.5-3.8l-.1-.9v-.1h-5.7v1.7h4c-.1.8-.4 1.5-.9 2a4 4 0 0 1-3 1.1 4 4 0 0 1-4-4.2 4 4 0 0 1 4-4.3c1.3 0 2.3.4 3 1.3v.1l1.3-1.2-.1-.1c-.4-.6-1-1-1.8-1.3-.7-.4-1.5-.5-2.3-.5-1.7 0-3.1.6-4.2 1.7a5.8 5.8 0 0 0-1.8 4.3c0 1.6.6 3 1.8 4.2a5.6 5.6 0 0 0 4.2 1.7zm30.2-11.6h-1.8V24h1.8V12.6zm-16 9.7h-5V19H96v-1.7h-4.6v-3.1h5v-1.7h-6.8V24h6.9v-1.7zm44.8-5.4v-1.5l5.3 8.5h1.9V12.7h-1.8v8.2l-5.1-8.2h-2V24h1.7v-7zM119 24v-9.6h3v-1.7H114v1.7h3.1V24h1.8zm-10 16.5a7.7 7.7 0 0 0-8 7.8c0 4.5 3.6 7.9 8 7.9 4.3 0 7.8-3.4 7.8-7.9s-3.5-7.8-7.9-7.8zm0 12.6c-2.4 0-4.5-2-4.5-4.8s2-4.8 4.4-4.8c2.4 0 4.5 2 4.5 4.8s-2 4.8-4.5 4.8zm79.4-20.5H180v23h3.5v-8.7h4.8c3.8 0 7.5-2.7 7.5-7.1 0-4.4-3.7-7.2-7.5-7.2zm0 11.1h-4.9v-7.9h5a4 4 0 0 1 4 4 4 4 0 0 1-4 4zm-16.2 1.8c-.7-1.8-2.7-5-6.7-5s-7.4 3.1-7.4 7.8c0 4.4 3.3 7.8 7.8 7.8 3.6 0 5.6-2.1 6.5-3.4l-2.7-1.8a4.5 4.5 0 0 1-3.8 2.2 4 4 0 0 1-3.9-2.4l10.6-4.4-.4-.9zM161.4 48c-.1-3 2.3-4.6 4-4.6 1.5 0 2.6.7 3 1.7l-7 2.9zm63.4 2.8-4.2-10H217l6.2 14-3.5 7.8h3.6l9.4-21.8h-3.8l-4 10zm-15.1-10.5c-2.5 0-5.1 1.1-6.2 3.5l3 1.3c.7-1.3 2-1.7 3.2-1.7 1.8 0 3.6 1.1 3.7 3v.2c-.7-.3-2-.8-3.7-.8-3.2 0-6.6 1.8-6.6 5.1 0 3.1 2.7 5.1 5.7 5.1 2.3 0 3.6-1 4.4-2.2h.1v1.7h3.4v-8.8c0-4.1-3-6.4-7-6.4zm-.5 12.7c-1 0-2.7-.6-2.7-2 0-1.8 2-2.5 3.7-2.5 1.5 0 2.2.4 3.1.8a4.2 4.2 0 0 1-4 3.7zm-56.4 2.6h3.5v-23h-3.5v23zm45 0h3.4v-23h-3.5v23zM126 40.4a7.7 7.7 0 0 0-8 7.8c0 4.5 3.6 7.9 8 7.9 4.3 0 7.9-3.4 7.9-7.9s-3.6-7.8-8-7.8zm0 12.6c-2.4 0-4.5-2-4.5-4.8s2-4.8 4.5-4.8c2.3 0 4.4 2 4.4 4.8s-2 4.8-4.4 4.8zM147 42c-.8-1-2.3-1.7-4.2-1.7-4 0-7.5 3.4-7.5 7.8s3.6 7.9 7.5 7.9c1.9 0 3.4-.9 4.2-1.8v1.1c0 3-1.5 4.6-4.1 4.6-2.1 0-3.4-1.5-4-2.8l-3 1.3c.9 2 3.2 4.6 7 4.6 4 0 7.4-2.4 7.4-8.2V41h-3.2V42zM143.3 53c-2.4 0-4.4-2-4.4-4.8 0-2.7 2-4.8 4.4-4.8 2.4 0 4.2 2 4.2 4.8s-1.8 4.8-4.2 4.8zM19 14.6c-.3.5-.4 1.2-.4 2v40.8c0 .8.1 1.4.4 2L41.3 37 18.9 14.6zm30.6 14.2-26.3-15c-1.3-.7-2.4-.8-3.2-.3l22.4 22.4 7.1-7.1zM20 60.5c.8.4 2 .4 3.2-.3l26.3-15-7-7L20 60.4zm39.3-26.2L51 29.6 43.5 37l7.5 7.4 8.3-4.7c2.6-1.5 2.6-3.9 0-5.4z" class="st0"></path></svg>
+              </a>
+              <a class="header-app-item" href="#URL-IOS" target="_blank">
+                <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 220 74"><path fill="#FFF" d="M207.8 0H12.2C5.4 0 0 5.5 0 12.2v49.6C0 68.5 5.4 74 12.2 74h195.6c6.7 0 12.2-5.5 12.2-12.2V12.2C220 5.5 214.6 0 207.8 0zm10.6 61.8c0 5.8-4.7 10.6-10.6 10.6H12.2c-5.9 0-10.6-4.8-10.6-10.6V12.2c0-5.8 4.7-10.6 10.6-10.6h195.6c5.9 0 10.6 4.8 10.6 10.6v49.6zM74.7 21.6v-1a4.9 4.9 0 0 0-5.2-4.4h-4v11h4c3.3 0 5.2-2 5.2-5.6zm-7.4 4v-7.9H70c1.9.3 3.2 2 3 4v.7c-.1 1.9-1.8 3.3-3.6 3.2h-2.1zM46 36.8c0-3.3 1.7-6.3 4.5-8a9.7 9.7 0 0 0-7.7-4.1c-3.2-.4-6.3 1.9-8 1.9-1.6 0-4.1-2-6.8-1.9-3.6.2-6.8 2.2-8.6 5.3-3.7 6.4-1 16 2.6 21.1 1.8 2.6 3.9 5.4 6.6 5.3 2.6 0 3.6-1.7 6.8-1.7 3.2 0 4.1 1.7 6.9 1.7 2.8 0 4.6-2.6 6.3-5.2 1.3-1.8 2.3-3.8 3-6a9.2 9.2 0 0 1-5.6-8.4zm-5.3-15.6a9.4 9.4 0 0 0 2.2-6.7 9.5 9.5 0 0 0-6.2 3.2 9 9 0 0 0-2.2 6.5c2.5 0 4.7-1 6.2-3zm30.8 12.2-8.2 23H67l2-6.2h8.8l2 6.2h3.8l-8.2-23h-3.9zm-1.5 14 3.4-10.1 3.5 10h-7zm119-20c1.6.1 3.1-.9 3.6-2.5H191a2 2 0 0 1-2 1h-.1a2.2 2.2 0 0 1-2-2.3v-.1h5.8v-.6c0-2.6-1.4-4.2-3.7-4.2h-.5c-2.1.3-3.6 2.3-3.3 4.4v.6c0 2 1.7 3.7 3.8 3.7zm0-7.3h.2c1 0 2 1 1.8 2.2H187c0-1.3 1-2.2 2.1-2.2zM170.3 25c0 1.6.7 2.2 2.5 2.2h1v-1.4h-.7c-.8 0-1.2-.4-1.2-1.2v-4.3h1.8v-1.4H172v-2.1h-1.6v2.1H169v1.4h1.3V25zm-35.7 2.3c1 0 2-.5 2.6-1.4h.1v1.3h1.6V15.6h-1.6v4.6h-.1c-.5-1-1.5-1.5-2.6-1.5-2 0-3.4 1.7-3.4 4.3 0 2.7 1.3 4.3 3.4 4.3zm.5-7.1c1.3 0 2.2 1 2.2 2.8 0 1.8-.9 2.9-2.2 2.9-1.4 0-2.2-1.1-2.2-2.9 0-1.7.8-2.8 2.2-2.8zm58.7 19.3c-4.7 0-7.7 3.4-7.7 8.6 0 5.3 3 8.5 7.8 8.5 3.8 0 6.7-2 7.2-5.1H198a3.8 3.8 0 0 1-3.9 2.4h-.5a4.4 4.4 0 0 1-4-4.8V49h11.8v-1.2c0-5-3-8.2-7.5-8.2zm4 7h-8.3a4.2 4.2 0 0 1 4.6-4.2 4 4 0 0 1 3.8 4.2zm-17.6-4h-.1v-2.8h-3.3v16.7h3.4V46c.1-2 1.7-3.4 3.6-3.4.5 0 1 0 1.5.2v-3.2l-1.1-.1a4 4 0 0 0-4 3zm-70-26.9h-1.6v11.6h1.7V15.6zm56 23.9c-4.9 0-8 3.3-8 8.5 0 5.3 3 8.6 8 8.6 4.8 0 7.8-3.3 7.8-8.6 0-5.2-3-8.5-7.9-8.5zm4.3 8.5c0 3.7-1.6 5.8-4.4 5.8s-4.4-2.1-4.4-5.8c0-3.6 1.7-5.7 4.4-5.7s4.4 2.1 4.4 5.7zm-11.2-27.8c1.2 0 1.8.7 1.8 2v5h1.6v-6a2.7 2.7 0 0 0-2.9-2.5c-1 0-2 .5-2.4 1.5h-.2v-1.3h-1.5v8.3h1.6V22c0-1 1-1.8 2-1.8zm-30.3 7v-5.7c0-1.8-1.1-2.8-3.2-2.8-2 0-3.2 1-3.4 2.4h1.6c.2-.6.8-1 1.7-1 1.1 0 1.7.5 1.7 1.4v.7l-2.2.1c-2 .2-3.1 1-3.1 2.5v.3a2.5 2.5 0 0 0 2.7 2.2c1 0 2-.4 2.5-1.3h.2v1.2h1.5zm-1.6-3a2 2 0 0 1-2.2 1.8c-.8 0-1.5-.5-1.5-1.2 0-.8.5-1.2 1.7-1.2l2-.2v.7zm-7-2a4 4 0 1 0-7.9.8v.8a4 4 0 0 0 4.3 3.5 4 4 0 0 0 3.6-4.3v-.7zm-4 3.7c-1.4 0-2.2-1-2.2-2.9 0-1.8.8-2.8 2.3-2.8 1.4 0 2.2 1 2.2 2.8 0 1.8-.8 2.9-2.3 2.9zm22.8 17.5-2.5-.6c-3-.7-4.2-1.7-4.2-3.3 0-2 2-3.4 4.7-3.4s4.6 1.3 4.8 3.6h3.5c-.1-4-3.4-6.6-8.3-6.6-4.8 0-8.3 2.7-8.3 6.7 0 3.2 2 5.1 6.2 6.1l3 .8c2.9.7 4.1 1.8 4.1 3.5 0 2-2 3.6-5 3.6s-5.1-1.5-5.4-3.8h-3.5c.2 4.2 3.7 6.8 8.7 6.8 5.4 0 8.8-2.7 8.8-7 0-3.3-1.9-5.2-6.6-6.4zm14-7.7h-3.4v4h-2.4v2.7h2.4V52c0 3.2 1.3 4.5 4.7 4.5.6 0 1.2 0 1.9-.2v-2.7l-1.1.1c-1.4 0-2-.7-2-2v-9.3h3.1v-2.7h-3.2v-4zm-40.5 3.8a6 6 0 0 0-5.3 3v-2.8H104V62h3.5v-8.3c1 1.9 3.1 3 5.3 2.9 4.2 0 7-3.4 7-8.6 0-5.1-2.9-8.5-7-8.5zm-.9 14.2c-2.6 0-4.4-2.3-4.4-5.7 0-3.3 1.8-5.6 4.4-5.6 2.7 0 4.4 2.3 4.4 5.7 0 3.4-1.7 5.6-4.4 5.6zM89.6 27.2l1.7-6.1h.1l1.7 6h1.7l2.3-8.2h-1.7L94 25.2h-.2L92.1 19h-1.5l-1.7 6.3h-.2L87.3 19h-1.7l2.3 8.3h1.7zm-5.2-5a4 4 0 1 0-7.8.8v.8a4 4 0 0 0 4.3 3.5 4 4 0 0 0 3.5-4.3v-.7zM80.5 26c-1.4 0-2.2-1-2.2-2.9 0-1.8.8-2.8 2.2-2.8 1.5 0 2.3 1 2.3 2.8 0 1.8-.8 2.9-2.3 2.9zm97-3.6V22c.2-1 1.1-1.9 2.2-1.8 1.1 0 1.7.7 1.7 2v5h1.7v-5.9c0-1.5-1.4-2.7-2.9-2.6-1 0-2 .5-2.5 1.5h-.1v-4.6H176v11.6h1.6v-4.9zM94.5 39.5a6 6 0 0 0-5.3 3v-2.8h-3.4V62h3.5v-8.3c1 1.9 3.1 3 5.3 2.9 4.1 0 7-3.4 7-8.6 0-5.1-2.9-8.5-7.1-8.5zm3.5 8.5c0 3.5-1.7 5.7-4.4 5.7-2.6 0-4.4-2.3-4.4-5.7 0-3.3 1.8-5.6 4.4-5.6 2.7 0 4.4 2.3 4.4 5.6zm6.5-20.8h1.6v-6a2.7 2.7 0 0 0-2.8-2.5c-1 0-2 .5-2.5 1.5h-.1v-1.3H99v8.3h1.6V22c0-1 1-1.8 2-1.8 1.2 0 1.8.7 1.8 2v5zm45.5.1a4 4 0 0 0 3.6-4.3v-.7a4 4 0 1 0-7.8.7v.8a4 4 0 0 0 4.3 3.5zm-2.6-4.3c0-1.8.8-2.8 2.3-2.8 1.4 0 2.2 1 2.2 2.8 0 1.8-.8 2.9-2.2 2.9-1.4 0-2.3-1-2.3-2.9z"></path></svg>
+              </a>
+            </div>
+            <!-- /END APPS -->
+          </div>
+        </div>
+        <!-- / END HEADER PLAYER -->
+        <svg class="visualizer-filter">
+          <defs>
+            <filter height="160%" id="gooey" width="160%" x="-30%" y="-30%">
+              <fegaussianblur in="SourceGraphic" result="blur" stddeviation="10"></fegaussianblur>
+              <fecolormatrix in="blur" result="gooey" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 35 -20"></fecolormatrix>
+              <fecomposite in="SourceGraphic" in2="gooey" operator="atop"></fecomposite>
+            </filter>
+          </defs>
+        </svg>
+        <div class="visualizer"></div>
+        <!-- / END VISUALIZER -->
+        <!-- COVER -->
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAA1JREFUGFdjYGBgaAAAAIUAgbVRNccAAAAASUVORK5CYII=" class="player-cover" width="600" height="600" alt="Cover">
+      </header>
+      <main class="main flex-1">
+
+        <!-- PROGRAM -->
+        <div class="main-program pt-1.5 pb-1.5">
+          <div class="container">
+            <div class="program-wrapper schedule">
+              <div class="program-super" id="program-super">
+                <div class="program-header">
+                  <button class="program-button" data-tab="program-monday">Lunes</button>
+                  <button class="program-button" data-tab="program-tuesday">Martes</button>
+                  <button class="program-button" data-tab="program-wednesday">Miércoles</button>
+                  <button class="program-button" data-tab="program-thursday">Jueves</button>
+                  <button class="program-button" data-tab="program-friday">Viernes</button>
+                  <button class="program-button" data-tab="program-saturday">Sábado</button>
+                  <button class="program-button" data-tab="program-sunday">Domingo</button>
+                </div>
+                <div class="programs-list" id="programs-list">
+                  <ul class="nexo-schedule-list" id="program-monday"></ul>
+                  <ul class="nexo-schedule-list" id="program-tuesday"></ul>
+                  <ul class="nexo-schedule-list" id="program-wednesday"></ul>
+                  <ul class="nexo-schedule-list" id="program-thursday"></ul>
+                  <ul class="nexo-schedule-list" id="program-friday"></ul>
+                  <ul class="nexo-schedule-list" id="program-saturday"></ul>
+                  <ul class="nexo-schedule-list" id="program-sunday"></ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- / END PROGRAM -->
+
+        <!-- NEWS -->
+        <div class="main-news none pt-2 pb-2">
+          <div class="container">
+            <div class="section-title text-center mb-1">
+              <h2 class="section-heading color-title m:fs-3 fw-800 uppercase">
+                <span class="section-name">Noticias</span>
+              </h2>
+            </div>
+            <div class="news-wrapper relative">
+              <div class="swiper swiper-news">
+                <div class="news swiper-wrapper" id="news"></div>
+              </div>
+              <!-- If we need navigation buttons -->
+              <div class="swiper-button-prev swiper-prev-news"></div>
+              <div class="swiper-button-next swiper-next-news"></div>
+            </div>
+          </div>
+        </div>
+        <!-- / END NEWS -->
+
+        <!-- YOUTUBE -->
+        <div class="main-ytlist none pt-2 pb-2">
+          <div class="container">
+            <div class="section-title text-center mb-1">
+              <h2 class="section-heading color-title m:fs-3 fw-800 uppercase">
+                <span class="section-name">TOP VIDEOS</span>
+              </h2>
+            </div>
+            <div class="ytlist-wrapper">
+              <div class="ytlistmini" id="ytListMini">
+                <div class="ytlistmini-list"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- / END YOUTUBE -->
+
+        <!-- TEAM -->
+        <div class="main-team none pt-2 pb-2">
+          <div class="container">
+            <div class="section-title text-center mb-1">
+              <h2 class="section-heading color-title m:fs-3 fw-800 uppercase">
+                <span class="section-name">Nuestro Equipo de Trabajo</span>
+              </h2>
+            </div>
+            <div class="team-wrapper relative">
+              <div class="swiper swiper-team">
+                <div class="team swiper-wrapper" id="team"></div>
+              </div>
+              <!-- If we need navigation buttons -->
+              <div class="swiper-button-prev swiper-prev-team"></div>
+              <div class="swiper-button-next swiper-next-team"></div>
+            </div>
+          </div>
+        </div>
+        <!-- / END NEWS -->
+
+        <!-- HISTORY -->
+        <div class="main-history pt-2 pb-2">
+          <div class="container history-insert">
+            <div class="section-title text-center mb-1">
+              <h2 class="section-heading color-title m:fs-3 fw-800 uppercase">
+                <span class="section-name">Últimas canciones sonadas</span>
+              </h2>
+            </div>
+            <div class="last-played">
+              <div class="history">
+                <div class="history-wrapper">
+                  <img class="history-art" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAA1JREFUGFdjYGBgaAAAAIUAgbVRNccAAAAASUVORK5CYII=">
+                  <div class="history-meta fs-7">
+                    <span class="history-title fw-700 uppercase">Titulo canción</span>
+                    <span class="history-artist">Artista</span>
+                  </div>
+                </div>
+              </div>
+              <div class="history">
+                <div class="history-wrapper">
+                  <img class="history-art" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAA1JREFUGFdjYGBgaAAAAIUAgbVRNccAAAAASUVORK5CYII=">
+                  <div class="history-meta fs-7">
+                    <span class="history-title fw-700 uppercase">Titulo canción</span>
+                    <span class="history-artist">Artista</span>
+                  </div>
+                </div>
+              </div>
+              <div class="history">
+                <div class="history-wrapper">
+                  <img class="history-art" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAA1JREFUGFdjYGBgaAAAAIUAgbVRNccAAAAASUVORK5CYII=">
+                  <div class="history-meta fs-7">
+                    <span class="history-title fw-700 uppercase">Titulo canción</span>
+                    <span class="history-artist">Artista</span>
+                  </div>
+                </div>
+              </div>
+              <div class="history">
+                <div class="history-wrapper">
+                  <img class="history-art" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAA1JREFUGFdjYGBgaAAAAIUAgbVRNccAAAAASUVORK5CYII=">
+                  <div class="history-meta fs-7">
+                    <span class="history-title fw-700 uppercase">Titulo canción</span>
+                    <span class="history-artist">Artista</span>
+                  </div>
+                </div>
+              </div>
+              <div class="history">
+                <div class="history-wrapper">
+                  <img class="history-art" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAA1JREFUGFdjYGBgaAAAAIUAgbVRNccAAAAASUVORK5CYII=">
+                  <div class="history-meta fs-7">
+                    <span class="history-title fw-700 uppercase">Titulo canción</span>
+                    <span class="history-artist">Artista</span>
+                  </div>
+                </div>
+              </div>
+              <div class="history">
+                <div class="history-wrapper">
+                  <img class="history-art" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAA1JREFUGFdjYGBgaAAAAIUAgbVRNccAAAAASUVORK5CYII=">
+                  <div class="history-meta fs-7">
+                    <span class="history-title fw-700 uppercase">Titulo canción</span>
+                    <span class="history-artist">Artista</span>
+                  </div>
+                </div>
+              </div>
+              <div class="history">
+                <div class="history-wrapper">
+                  <img class="history-art" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAA1JREFUGFdjYGBgaAAAAIUAgbVRNccAAAAASUVORK5CYII=">
+                  <div class="history-meta fs-7">
+                    <span class="history-title fw-700 uppercase">Titulo canción</span>
+                    <span class="history-artist">Artista</span>
+                  </div>
+                </div>
+              </div>
+              <div class="history">
+                <div class="history-wrapper">
+                  <img class="history-art" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAA1JREFUGFdjYGBgaAAAAIUAgbVRNccAAAAASUVORK5CYII=">
+                  <div class="history-meta fs-7">
+                    <span class="history-title fw-700 uppercase">Titulo canción</span>
+                    <span class="history-artist">Artista</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- / END HISTORY -->
+        <!-- SLIDER DE BANNERS -->
+        <div class="main-slider pt-2 pb-2">
+          <div class="container">
+            <div class="section-title text-center mb-1">
+              <h2 class="section-heading color-title m:fs-3 fw-800 uppercase">
+                <span class="section-name">Anuncios // Eventos</span>
+              </h2>
+            </div>
+            <div class="slider relative">
+              <div class="slider-wrapper relative">
+                <div class="slider-slide"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- / END SLIDER DE BANNERS -->
+      </main>
+       <!-- FOOTER -->
+   <footer class="footer m:mt-2 mt-1">
+    <div class="footer-wrapper container pb-1.5 pt-1.5 flex items-center justify-center column g-1">
+            <div class="footer-copyright flex g-1 items-center justify-between l:row column pb-1 pt-1">
+          <small class="m:fs-6"><strong class="color-title fw-700"> </strong>Powered by ESTACIONKUSMEDIOS</small>
+   
+      </div>
+  </div></footer>
+  <!-- / END FOOTER -->
+    </div>
+  </div>
+  <!-- / END TEMPLATE -->
+  <!-- MODAL -->
+  <div class="modal">
+    <div class="modal-content">
+      <button class="modal-close"><i class="ri-close-fill"></i></button>
+      <div class="modal-body scrollbar"></div>
+    </div>
+  </div>
+  <!-- / END MODAL -->
+  <!-- INSTALL BUTTONS -->
+  <div class="install-buttons" id="install-container">
+    <div class="install-buttons-wrapper">
+      <button class="btn close-install" id="close-install">
+        <i class="ri-close-fill"></i>
+      </button>
+      <h4>Instala Nuestra Aplicacion</h4>
+      <p>Instala nuestra aplicación en tu dispositivo para una mejor experiencia. Hemosa creado una aplicación web progresiva para que puedas disfrutar de la música en cualquier lugar.</p>
+      <button class="install-button btn" id="install-pwa"></button>
+    </div>
+  </div>
+  <!-- / END INSTALL BUTTONS -->
+</body>
+</html>
+
