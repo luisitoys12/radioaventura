@@ -2,216 +2,221 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="theme-color" content="dark light">
+  <title>Radio Aventura - ZenoFM</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Radio Aventura</title>
-  <meta property="og:image" content="assets/redes.png">
-  <meta property="og:image:type" content="image/png">
-  <meta property="og:image:width" content="600">
-  <meta property="og:image:height" content="360">
-  <meta property="og:title" content="Radio Aventura">
-  <meta property="og:description" content="Tu Estación Fiel...">
-  <link rel="stylesheet" href="npm/swiper%4011/swiper-bundle.min.css">
-  <link rel="stylesheet" href="css/main.min.css">
-  <link rel="stylesheet" href="css/icons/remixicon.css">
-  <link rel="stylesheet" href="8.10.0/video-js.css">
-  <link href="css2?family=Montserrat:wght@300;700;800&display=swap" rel="stylesheet">
-  <link rel="shortcut icon" href="assets/favicon.ico" type="image/x-icon">
-  <link href='manifest.json' rel='manifest'>
-  <link rel="stylesheet" href="custom.css">
+  <style>
+    body {
+      background: #f9f9f9;
+      font-family: 'Montserrat', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .radio-container {
+      max-width: 400px;
+      margin: 50px auto 0 auto;
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.09);
+      padding: 2rem;
+      text-align: center;
+    }
+    .cover-img {
+      width: 180px;
+      height: 180px;
+      border-radius: 12px;
+      object-fit: cover;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.11);
+      background: #eee;
+      margin-bottom: 1rem;
+      border: 1px solid #ddd;
+    }
+    .now-playing {
+      background: #ff471a;
+      color: #fff;
+      display: inline-block;
+      font-size: 0.95rem;
+      font-weight: 700;
+      border-radius: 6px;
+      padding: 4px 12px;
+      margin-bottom: 0.6rem;
+      letter-spacing: 1px;
+    }
+    .song-title {
+      font-size: 1.3rem;
+      font-weight: 800;
+      margin-bottom: 0.4rem;
+      color: #222;
+    }
+    .song-artist {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #666;
+      margin-bottom: 1rem;
+    }
+    .audio-controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 1rem;
+    }
+    .audio-controls button {
+      background: #ff471a;
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      font-size: 1.3rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .audio-controls button:hover {
+      background: #d63c12;
+    }
+    .audio-vol {
+      width: 120px;
+      accent-color: #ff471a;
+    }
+    .history-section {
+      max-width: 700px;
+      margin: 40px auto 0 auto;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+      padding: 1.2rem;
+    }
+    .history-title {
+      text-align: center;
+      font-weight: 900;
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      color: #222;
+      letter-spacing: 2px;
+    }
+    .history-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      justify-content: center;
+    }
+    .history-item {
+      background: #f4f4f4;
+      border-radius: 10px;
+      padding: 0.7rem;
+      width: 150px;
+      text-align: center;
+    }
+    .history-art {
+      width: 70px;
+      height: 70px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+      background: #eee;
+      border: 1px solid #ddd;
+    }
+    .history-song {
+      font-size: 0.99rem;
+      font-weight: 700;
+      color: #222;
+      margin-bottom: 2px;
+    }
+    .history-artist {
+      font-size: 0.94rem;
+      color: #777;
+    }
+    @media (max-width:600px) {
+      .radio-container { max-width: 96%; }
+      .history-section { max-width: 98%; }
+      .history-item { width: 45%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="radio-container">
+    <img id="cover-img" class="cover-img" src="https://aventura.kusmedios.lat/img/logo.png" alt="Cover">
+    <div class="now-playing">ON AIR</div>
+    <div id="song-title" class="song-title">Cargando...</div>
+    <div id="song-artist" class="song-artist">Artista</div>
+    <div class="audio-controls">
+      <button id="play-btn" title="Reproducir">&#9658;</button>
+      <button id="pause-btn" title="Pausar">&#10074;&#10074;</button>
+      <input id="audio-vol" class="audio-vol" type="range" min="0" max="1" step="0.01" value="1">
+    </div>
+    <audio id="radio-player" src="https://stream.zeno.fm/i6yeiqilxkvuv" preload="none"></audio>
+  </div>
 
-  <!-- Firebase SDKs (si aún lo usas para otras funciones) -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-analytics.js";
-    const firebaseConfig = {
-      apiKey: "AIzaSyBE7WhOpjB9q_z3Bx_N6PtPEJuV6wS8qLk",
-      authDomain: "radioaventura-1e6e0.firebaseapp.com",
-      databaseURL: "https://radioaventura-1e6e0-default-rtdb.firebaseio.com",
-      projectId: "radioaventura-1e6e0",
-      storageBucket: "radioaventura-1e6e0.firebasestorage.app",
-      messagingSenderId: "4896086531",
-      appId: "1:4896086531:web:9dbafd9a896acc7754cc36",
-      measurementId: "G-8WM1YFRLWR"
-    };
-    const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
-    window.firebaseConfig = firebaseConfig;
-  </script>
+  <div class="history-section">
+    <div class="history-title">ÚLTIMAS CANCIONES SONADAS</div>
+    <div id="history-list" class="history-list">
+      <!-- Se llenará por JS -->
+    </div>
+  </div>
 
-  <script src="npm/swiper%4011/swiper-bundle.min.js" defer></script>
-  <script src="js/main.min.js" defer></script>
-  <script src="8.10.0/video.min.js" defer></script>
-  <script src="ajax/libs/color-thief/2.3.0/color-thief.umd.js" defer></script>
-
-  <!-- ZenoFM Metadata & History Integration -->
   <script>
+    // ------ Audio Controls ------
+    const player = document.getElementById('radio-player');
+    document.getElementById('play-btn').onclick = () => player.play();
+    document.getElementById('pause-btn').onclick = () => player.pause();
+    document.getElementById('audio-vol').oninput = function() { player.volume = this.value; };
+
+    // ------ ZenoFM Metadata ------
     const ZENO_STREAM_ID = 'i6yeiqilxkvuv';
-    const ZENO_STREAM_URL = `https://stream.zeno.fm/${ZENO_STREAM_ID}`;
     const ZENO_METADATA_URL = `https://api.zeno.fm/metadata/${ZENO_STREAM_ID}.json`;
     const ZENO_HISTORY_URL = `https://api.zeno.fm/history/${ZENO_STREAM_ID}.json`;
 
-    // Player setup
-    window.streams = {
-      base_url: ZENO_STREAM_URL,
-      service: 'zenofm',
-      // ...otros valores como sliderTiming, etc.
-    };
-
-    // Actualiza metadatos y historial
-    async function updatePlayerInfo() {
+    async function updateMetadata() {
       try {
-        const metaRes = await fetch(ZENO_METADATA_URL);
-        const meta = await metaRes.json();
-        document.getElementById('song-title').textContent = meta.title || 'Título Canción';
-        document.getElementById('song-artist').textContent = meta.artist || 'Artista';
-        if (meta.cover_url) {
-          document.getElementById('song-artwork').src = meta.cover_url;
+        const res = await fetch(ZENO_METADATA_URL);
+        const meta = await res.json();
+        document.getElementById('song-title').textContent = meta.title || "Sin título";
+        document.getElementById('song-artist').textContent = meta.artist || "Desconocido";
+        if(meta.cover_url) {
+          document.getElementById('cover-img').src = meta.cover_url;
+        } else {
+          document.getElementById('cover-img').src = "https://aventura.kusmedios.lat/img/logo.png";
         }
-      } catch (e) {
-        console.log('Error obteniendo metadatos ZenoFM', e);
+      } catch {
+        document.getElementById('song-title').textContent = "Sin conexión";
+        document.getElementById('song-artist').textContent = "";
+        document.getElementById('cover-img').src = "https://aventura.kusmedios.lat/img/logo.png";
       }
     }
 
     async function updateHistory() {
       try {
-        const historyRes = await fetch(ZENO_HISTORY_URL);
-        const history = await historyRes.json();
-        const historyDiv = document.getElementById('last-played');
-        if (historyDiv && history.tracks) {
-          historyDiv.innerHTML = '';
-          history.tracks.slice(0, 8).forEach(track => {
-            const art = track.cover_url ? track.cover_url : 'assets/default-cover.png';
-            historyDiv.innerHTML += `
-              <div class="history">
-                <div class="history-wrapper">
-                  <img class="history-art" src="${art}">
-                  <div class="history-meta fs-7">
-                    <span class="history-title fw-700 uppercase">${track.title || 'Titulo canción'}</span>
-                    <span class="history-artist">${track.artist || 'Artista'}</span>
-                  </div>
-                </div>
-              </div>
-            `;
+        const res = await fetch(ZENO_HISTORY_URL);
+        const data = await res.json();
+        const container = document.getElementById('history-list');
+        container.innerHTML = "";
+        if(data.tracks && data.tracks.length) {
+          data.tracks.slice(0,8).forEach(track => {
+            container.innerHTML += `
+              <div class="history-item">
+                <img class="history-art" src="${track.cover_url||'https://aventura.kusmedios.lat/img/logo.png'}" alt="Art">
+                <div class="history-song">${track.title||'Sin título'}</div>
+                <div class="history-artist">${track.artist||'Desconocido'}</div>
+              </div>`;
           });
+        } else {
+          container.innerHTML = "<div>No hay historial disponible.</div>";
         }
-      } catch (e) {
-        console.log('Error obteniendo historial ZenoFM', e);
+      } catch {
+        document.getElementById('history-list').innerHTML = "<div>Error al cargar historial.</div>";
       }
     }
 
-    // Actualiza cada 10 segundos
-    setInterval(updatePlayerInfo, 10000);
+    updateMetadata();
+    updateHistory();
+    setInterval(updateMetadata, 10000); // Cada 10s
     setInterval(updateHistory, 10000);
-    window.addEventListener('DOMContentLoaded', () => {
-      updatePlayerInfo();
-      updateHistory();
-    });
 
-    // Enviar petición de canción (ejemplo básico)
-    function sendSongRequest() {
-      const request = prompt("¿Qué canción deseas escuchar?");
-      if (request) {
-        alert("¡Gracias! Hemos recibido tu petición: " + request);
-        // Aquí podrías enviar a tu backend o a una hoja de Google, etc.
-      }
-    }
+    // Opcional: Autoplay en móviles requiere interacción
+    document.getElementById('play-btn').onclick = () => {
+      player.play();
+      updateMetadata();
+    };
   </script>
-</head>
-<body class="preload">
-  <div class="template">
-    <!-- HEADER BAR -->
-    <div class="player flex column">
-      <div class="header-bar">
-        <div class="container flex g-1 items-center justify-between l:row column">
-          <img src="https://aventura.kusmedios.lat/img/logo.png" alt="logo" width="376" height="98" class="header-logo player-logo">
-          <div class="header-right flex g-0.5 l:ml-auto">
-            <button class="btn send-prm" data-outside="prm2"><i class="ri-mail-send-fill"></i> Promociones</button>
-            <button class="btn station-prm none" data-outside="prm"><i class="ri-disc-fill"></i> Estaciones</button>
-            <button class="btn station-tv none"><i class="ri-live-fill"></i> TV en vivo</button>
-          </div>
-        </div>
-      </div>
-      <!-- HEADER PLAYER -->
-      <div class="header-player relative z-20 m:pt-2 pt-1">
-        <div class="container flex g-1 l:items-end items-center l:row column relative">
-          <!-- LEFT -->
-          <div class="player-left flex-none">
-            <div class="relative tilt-box">
-              <div class="player-picture flex-none">
-                <img id="song-artwork" src="assets/default-cover.png" alt="cover" width="96" height="96">
-              </div>
-              <div class="player-controls flex items-center items-start g-0.5">
-                <button onclick="document.getElementById('radio-player').play()" aria-label="Play"><i class="ri-play-fill"></i></button>
-                <button onclick="document.getElementById('radio-player').pause()" aria-label="Pause"><i class="ri-pause-fill"></i></button>
-                <input id="volume-control" type="range" min="0" max="1" step="0.01" value="1" style="width:80px;" onchange="document.getElementById('radio-player').volume=this.value">
-              </div>
-              <audio id="radio-player" src="https://stream.zeno.fm/i6yeiqilxkvuv" autoplay></audio>
-            </div>
-            <div class="player-social flex g-0.5 items-center justify-center mt-1.5">
-              <a href="https://facebook.com/tu-radio" target="_blank"><i class="ri-facebook-circle-fill"></i></a>
-              <a href="https://instagram.com/tu-radio" target="_blank"><i class="ri-instagram-fill"></i></a>
-              <a href="https://twitter.com/tu-radio" target="_blank"><i class="ri-twitter-x-fill"></i></a>
-            </div>
-          </div>
-          <!-- RIGHT -->
-          <div class="player-right flex l:items-start items-center column g-1 l:ml-2">
-            <div class="player-info l:text-left text-center uppercase">
-              <p class="color-text-inverse flex l:justify-start justify-center fs-7 fw-600 g-0.5 items-center"><span class="badge">On air</span>Reproduciendo</p>
-              <h1 id="song-title" class="player-title station-name truncante-line color-title-inverse song-name m:fs-2 fs-3 fw-700">Título Canción</h1>
-              <p id="song-artist" class="player-description station-description song-artist color-text-inverse m:fs-5 fs-6 fw-600">Artista</p>
-              <button class="btn" onclick="sendSongRequest()"><i class="ri-music-2-fill"></i> Pedir canción</button>
-              <button class="btn" onclick="navigator.share ? navigator.share({title:document.title,url:location.href}) : alert('Copia el enlace para compartir!')"><i class="ri-share-fill"></i> Compartir</button>
-            </div>
-          </div>
-          <!-- APPS -->
-          <div class="header-app flex justify-center wrap g-0.75">
-            <a class="header-app-item" href="https://play.google.com/store/apps/details?id=com.radioamante" target="_blank">
-              <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 250 74"><path fill="#FFF" d="..."/></svg>
-            </a>
-            <a class="header-app-item" href="#URL-IOS" target="_blank">
-              <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 220 74"><path fill="#FFF" d="..."/></svg>
-            </a>
-          </div>
-        </div>
-      </div>
-      <main class="main flex-1">
-
-        <!-- PROGRAMAS, NOTICIAS, VIDEOS, EQUIPO (igual que antes)... -->
-
-        <!-- HISTORY: Últimas canciones sonadas -->
-        <div class="main-history pt-2 pb-2">
-          <div class="container history-insert">
-            <div class="section-title text-center mb-1">
-              <h2 class="section-heading color-title m:fs-3 fw-800 uppercase">
-                <span class="section-name">Últimas canciones sonadas</span>
-              </h2>
-            </div>
-            <div id="last-played" class="last-played"></div>
-          </div>
-        </div>
-
-        <!-- SLIDER DE BANNERS, FOOTER, ETC. -->
-
-        <!-- CHAT EN VIVO - Aquí puedes integrar algún servicio externo (ejemplo: Tawk.to, WhatsApp, etc.) -->
-        <!--
-        <div class="main-chat pt-2 pb-2">
-          <div class="container">
-            <h2>Chat en vivo</h2>
-            <iframe src="https://tawk.to/chat/tu-id" style="width:100%;height:400px;border:none"></iframe>
-          </div>
-        </div>
-        -->
-
-      </main>
-      <footer class="footer m:mt-2 mt-1">
-        <div class="footer-wrapper container pb-1.5 pt-1.5 flex items-center justify-center column g-1">
-          <div class="footer-copyright flex g-1 items-center justify-between l:row column pb-1 pt-1">
-            <small class="m:fs-6"><strong class="color-title fw-700"> </strong>Powered by ESTACIONKUSMEDIOS</small>
-          </div>
-        </div>
-      </footer>
-    </div>
-  </div>
 </body>
 </html>
